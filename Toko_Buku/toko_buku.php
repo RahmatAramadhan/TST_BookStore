@@ -4,6 +4,7 @@
         public function __construct($koneksi){
             $this->koneksi = $koneksi;
         }
+        
         public function getAllBook(){
             $query  = "SELECT * FROM buku ";
             $result = mysqli_query($this->koneksi, $query);

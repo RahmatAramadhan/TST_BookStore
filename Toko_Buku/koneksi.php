@@ -1,5 +1,5 @@
 <?php 
-    $hostname   = 'mysql:host=localhost;dbname=Toko_Buku';
+    $hostname   = 'mysql:host=localhost;dbname=toko_buku';
     $username   = 'root';
     $password   = '';
 
