@@ -12,6 +12,17 @@
             if ($endpoint == '/getBook') {
                 $result = $dataBuku->getBook();
                 echo json_encode($result);
+            }elseif($endpoint == '/getBookById'){
+                if (isset($_GET['id'])) {
+                    $id = $_GET['id'];
+                    $result = $dataBuku->getBookById($id);
+                    echo json_encode($result);
+                }else{
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'ID buku tidak disertakan'
+                    ]);
+                }
             }
             break;
         

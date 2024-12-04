@@ -6,17 +6,33 @@
         public function __construct($koneksi){
             $this->koneksi = $koneksi;
         }
-        
-        public function getAllBook(){
-            
-        }
 
         public function getBookById($id){
-            $id = $_GET['id'];
-            $query  = "SELECT * FROM buku WHERE id_buku = '$id'";
-            $result = mysqli_query($this->koneksi, $query);
-            $row    = mysqli_fetch_assoc($result);
-            return $row;
+            $url = "http://localhost/Buku/DataBuku/api.php/getBookById?id=".urlencode($id);
+            $result = sendRequest($url, 'GET');
+            $response = json_decode($result, true);
+
+            if($response['HTTP_CODE'] == 200){
+                $books = json_decode($response['response'], true);
+
+                if (!empty($books)) {
+                    return[
+                        'status' => 'success',
+                        'data' => $books
+                    ];
+                }else{
+                    return [
+                        'status' => 'error',
+                        'message' => 'Tidak ada data'
+                        ];
+                }
+
+            }else{
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal mengambil data' . $response['HTTP_CODE']
+                    ];
+            }
 
         }
 
@@ -49,9 +65,20 @@
 
         }
 
-        public function transaction){
-            
+        public function transaction($id_buku, $id_user){
+            $query = "INSERT INTO transaksi (id_buku, id_user, total_harga) VALUES (:id_buku, :id_user, :total_harga)";
 
+            $total_harga = 0;
+            $run = $this->koneksi->prepare($query);
+            $run->bindParam(':id_buku', $id_buku);
+            $run->bindParam(':id_user', $id_user);
+            $run->bindParam(':total_harga', $total_harga);
+
+            if ($run->execute()) {
+                return true;
+            }else{
+                return false;
+            }
         }
 
         public function login($data){
