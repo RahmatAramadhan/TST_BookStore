@@ -1,4 +1,6 @@
 <?php 
+    require "curl_helper.php";
+
     class toko_buku{
         private $koneksi;
         public function __construct($koneksi){
@@ -6,13 +8,7 @@
         }
         
         public function getAllBook(){
-            $query  = "SELECT * FROM buku ";
-            $result = mysqli_query($this->koneksi, $query);
-            $buku   = [];
-            while ($row = mysqli_fetch_assoc($result)) {
-                $buku[] = $row;
-            }
-            return $buku;
+            
         }
 
         public function getBookById($id){
@@ -24,11 +20,37 @@
 
         }
 
-        public function addBookFrom(){
-            
+        public function getBookFromAPI(){
+            $url = "http://localhost/Buku/DataBuku/api.php/getBook";
+            $result = sendRequest($url, 'GET');
+            $response = json_decode($result, true);
+
+            if($response['HTTP_CODE'] == 200){
+                $books = json_decode($response['response'], true);
+
+                if (!empty($books)) {
+                    return[
+                        'status' => 'success',
+                        'data' => $books
+                    ];
+                }else{
+                    return [
+                        'status' => 'error',
+                        'message' => 'Tidak ada data'
+                        ];
+                }
+
+            }else{
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal mengambil data' . $response['HTTP_CODE']
+                    ];
+            }
+
         }
 
-        public function transaction(){
+        public function transaction){
+            
 
         }
 
