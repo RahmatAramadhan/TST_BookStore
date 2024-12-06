@@ -3,9 +3,31 @@
     require_once 'toko_buku.php';
 
     $tokoBuku   = new toko_buku($koneksi);
+    $auth = new authentikasi($koneksi);
     $method     = $_SERVER['REQUEST_METHOD'];
     $endpoint   = $_SERVER['PATH_INFO'];
     header('Content-Type: application/json');
+
+    $protectedEndpoints = ['/getBook', '/getBookByID', '/transaction'];
+
+    if(in_array($endpoint, $protectedEndpoints)){
+        $headers = getallheaders();
+        if (isset($headers['Authorization'])) {
+            $token = str_replace('Bearer ','',$headers['Authorization']);
+            $payload = $auth->validateToken($token);
+
+            if(!$payload){
+                http_response_code(401);
+                echo json_encode(['message' => 'Unauthorized token']);
+                exit();
+            }
+            
+        }else{
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Token tidak disertakan']);
+            exit();
+        }
+    }
 
     switch ($method) {
         case 'GET':

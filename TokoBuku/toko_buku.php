@@ -1,5 +1,6 @@
 <?php 
     require "curl_helper.php";
+    require "authentikasi.php";
 
     class toko_buku{
         private $koneksi;
@@ -94,14 +95,16 @@
 
             if ($user) {
                 if (password_verify($password, $user['password'])) {
-                    session_start();
-                    $_SESSION['user_id']    = $user['id'];
-                    $_SESSION['username']   = $user['username'];
+                    
+                    $auth = new authentikasi($this->koneksi);
+                    $token = $auth->generateToken($user['username'], $user['id']);
+                    $auth->saveActiveToken($user['id'], $token);
 
                     return [
                         'status'    => 'true',
                         'message'   => 'Login Berhasil',
-                        'user'      => $user
+                        'user'      => $user,
+                        'token'     => $token
                     ];
                 }else{
                     return[
