@@ -18,13 +18,16 @@
 
             if(!$payload){
                 http_response_code(401);
-                echo json_encode(['message' => 'Unauthorized token']);
+                echo json_encode([
+                'status' => false,
+                'message' => 'Unauthorized token'
+                ]);
                 exit();
             }
             
         }else{
             http_response_code(401);
-            echo json_encode(['status' => 'error', 'message' => 'Token tidak disertakan']);
+            echo json_encode(['status' => false, 'message' => 'Token tidak disertakan']);
             exit();
         }
     }
@@ -43,6 +46,17 @@
                     echo json_encode([
                         'status' => 'error',
                         'message' => 'ID buku tidak disertakan'
+                    ]);
+                }
+            }elseif($endpoint == '/getTransaction'){
+                if (isset($_GET['id'])) {
+                    $id = $_GET['id'];
+                    $result = $tokoBuku->getTransaction($id);
+                    echo json_encode($result);
+                }else {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'ID user tidak disertakan'
                     ]);
                 }
             }
@@ -74,6 +88,39 @@
             }
             break;
 
+        case 'PUT':
+            
+            if($endpoint == '/updateUser'){
+                $data   = json_decode(file_get_contents('php://input'), true);
+
+                if(isset($data['id']) && isset($data['username'])&& isset($data['password'])){
+                    $id = $data['id'];
+                    $updateResult = $tokoBuku->editUser($id, $data);
+                    echo json_encode($updateResult);
+                }else{
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'ID, username, dan password tidak disertakan'
+                    ]);
+                }
+            }
+            break;
+
+        case 'DELETE':
+            if($endpoint == '/deleteUser'){
+                if(isset($_GET['id'])){
+                    $id = $_GET['id'];
+                    $deleteResult = $tokoBuku->deleteUser($id);
+                    echo json_encode($deleteResult);
+                }else{
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'ID tidak disertakan'
+                    ]);
+                }
+            }
+            break;
+            
         default:
             # code...
             break;

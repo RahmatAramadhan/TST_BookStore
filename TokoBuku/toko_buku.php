@@ -46,10 +46,7 @@
                 $books = json_decode($response['response'], true);
 
                 if (!empty($books)) {
-                    return[
-                        'status' => 'success',
-                        'data' => $books
-                    ];
+                    return $books;
                 }else{
                     return [
                         'status' => 'error',
@@ -79,6 +76,25 @@
                 return true;
             }else{
                 return false;
+            }
+        }
+
+        public function getTransaction($id){
+            $query = "SELECT * FROM transaksi WHERE id_user = :id_user";
+            $run = $this->koneksi->prepare($query);
+            $run->bindParam(':id_user', $id);
+            $run->execute();
+            $result = $run->fetchAll(PDO::FETCH_ASSOC);
+            if ($result) {
+                return[
+                    'status' => 'success',
+                    'data' => $result
+                ];
+            }else{
+                return[
+                    'status' => 'error',
+                    'message' => 'transaksi tidak ditemukan'
+                ];
             }
         }
 
@@ -139,6 +155,49 @@
                 return false;
             }
             
+        }
+
+        public function editUser($id, $data){
+            $query = "UPDATE user SET usernam = :username, password = :password WHERE id = :id";
+            $stmt = $this->koneksi->prepare($query);
+            
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':username', $data['username'], PDO::PARAM_STR);
+
+            $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+
+            if ($stmt->execute()){
+                return [
+                    'status' => 'success',
+                    'message' => 'User berhasil diupdate'
+                ];
+            }else{
+                return [
+                    'status' => 'error',
+                    'message' => 'User gagal diupdate'
+                ];
+            }
+            
+        }
+
+        public function deleteUser($id){
+            $query = "DELETE FROM user WHERE id = :id";
+            $stmt = $this->koneksi->prepare($query);
+
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            
+            if ($stmt->execute()){
+                return [
+                    'status' => 'success',
+                    'message' => 'User berhasil dihapus'
+                    ];
+            }else{
+                return [
+                    'status' => 'error',
+                    'message' => 'User gagal dihapus'
+                    ];
+            }
         }
 
     }

@@ -44,28 +44,22 @@ function sendRequest(endpoint, method = 'GET', data = null) {
     }
 
     return fetch(`${API_URL}${endpoint}`, options)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json(); // Parse JSON respons
-        })
-        .then((result) => {
-            console.log("Response Data:", result); // Debug respons
+    .then((response) => response.json()) // Parse JSON langsung
+    .then((data) => {
+        console.log("Response Data:", data); 
+        if (data.success) {
+            return data.success; // Kembalikan data yang relevan
+        } else {
+            throw new Error(data.message || "Unexpected server response");
+        }
+    })
+    .catch((error) => {
+        console.error("Request error:", error.message || error);
+        return { status: "error", message: "Request failed" };
+    });
 
-            // Pastikan respons memiliki format yang sesuai
-            if (result.status === "success" && result.data) {
-                return result.data; // Kembalikan data buku
-            } else {
-                throw new Error(result.message || "Unexpected server response");
-            }
-        })
-        .catch((error) => {
-            console.error("Request error:", error.message || error);
-            return { status: "error", message: "Request failed" };
-        });
+
 }
-
 
 // Fungsi untuk login
 function login() {
@@ -90,37 +84,74 @@ function logout() {
     loadLogin(); // Kembali ke halaman login
 }
 
+function register(){
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (password !== confirmPassword) {
+        alert("Password do not match!");
+        return;
+    }
+
+    sendRequest("/register","POST", {username, password}).then((data) => {
+        if (data.success) {
+            alert("Register berhasil!");
+            loadLogin();
+        }else{
+            alert("Register gagal: " + data.message);
+        }
+    });
+}
+
+
 // Fungsi untuk memuat daftar buku
 function loadBook() {
-    const endpoint = "/getBook";
+    sendRequest("/getBook", "GET").then((response) => {
+        const content = document.getElementById("content");
 
-    sendRequest(endpoint, "GET")
-        .then((result) => {
-            if (result.status === "success" && Array.isArray(result.data)) {
-                const bookContainer = document.getElementById("book-container"); // Pastikan ID-nya sesuai
-                bookContainer.innerHTML = ""; // Kosongkan kontainer sebelum menambahkan buku baru
+        // Buat dua kolom
+        const column1 = document.createElement("div");
+        const column2 = document.createElement("div");
 
-                // Iterasi data buku dan tambahkan ke DOM
-                result.data.forEach((book) => {
-                    const bookItem = document.createElement("div");
-                    bookItem.className = "book-item"; // Gunakan class untuk styling
-                    bookItem.innerHTML = `
-                        <h3>${book.Judul}</h3>
-                        <p>Harga: Rp ${book.Harga.toLocaleString("id-ID")}</p>
-                        <button onclick="buyBook(${book.id})">Beli</button>
-                    `;
-                    bookContainer.appendChild(bookItem);
-                });
-            } else {
-                console.error("Failed to load books:", result.message);
-                alert("Gagal memuat data buku. Coba lagi nanti.");
-            }
-        })
-        .catch((error) => {
-            console.error("Error while fetching books:", error);
-            alert("Terjadi kesalahan saat mengambil data buku.");
-        });
+        // Tambahkan kelas 'column' ke setiap kolom
+        column1.classList.add("column");
+        column2.classList.add("column");
+
+        // Pastikan data tersedia
+        if (response.status === "true" && response.data.length > 0) {
+            response.data.forEach((book, index) => {
+                // Buat elemen kartu untuk setiap buku
+                const card = document.createElement("div");
+                card.classList.add("card");
+                card.innerHTML = `
+                    <h3>${book.Judul}</h3>
+                    <p><strong>Price:</strong> Rp${book.Harga.toLocaleString()}</p>
+                    <button onclick="addTransaction(${book.id})">Tambah</button>
+                `;
+
+                // Tambahkan kartu ke salah satu kolom secara bergantian
+                if (index % 2 === 0) {
+                    column1.appendChild(card);
+                } else {
+                    column2.appendChild(card);
+                }
+            });
+        } else {
+            // Jika tidak ada data, tampilkan pesan
+            content.innerHTML = "<p>Tidak ada buku tersedia.</p>";
+        }
+
+        // Tambahkan kedua kolom ke kontainer utama
+        content.appendChild(column1);
+        content.appendChild(column2);
+    }).catch((error) => {
+        console.error("Error fetching books:", error);
+        const content = document.getElementById("content");
+        content.innerHTML = "<p>Terjadi kesalahan saat memuat data buku.</p>";
+    });
 }
+
 
 // Fungsi untuk menampilkan form login
 function loadLogin() {
@@ -131,12 +162,38 @@ function loadLogin() {
             <input type="text" id="username" placeholder="Username" /><br /><br />
             <input type="password" id="password" placeholder="Password" /><br /><br />
             <button onclick="login()">Login</button>
+            <button onclick="loadRegister()">Register</button>
         </div>`;
+}
+
+function loadRegister(){
+    const content = document.getElementById("content");
+    content.innerHTML = `
+    <h2>Register</h2>
+    <div class="card">
+        <input type="text" id="username" placeholder="Username" /><br /><br />
+        <input type="password" id="password" placeholder="Password" /><br /><br />
+        <input type="password" id="confirmPassword" placeholder="Re-Password" /><br/> <br/>
+        <button onClick="register()">Register</button>
+        <button onClick="loadLogin()">Back to Login</button>
+    </div>
+    `;
 }
 
 // Periksa apakah token tersedia di cookies
 document.addEventListener("DOMContentLoaded", () => {
     const token = getCookie('authToken');
+    const btnBook = document.getElementById("btn-book");
+    const btnLogin = document.getElementById("btn-login");
+
+    btnBook.addEventListener("click", ()=>{
+        loadBook();
+    });
+
+    btnLogin.addEventListener("click", () => {
+        loadLogin();
+    });
+
     if (token) {
         loadBook(); // Jika token ada, langsung memuat daftar buku
     } else {
