@@ -21,7 +21,7 @@
         }
 
         public function saveActiveToken($id, $token){
-            $query = "INSERT INTO token (id, token, expires_at) VALUES (:id, :token, :expires_at)";
+            $query = "INSERT INTO token (id_user, token, expires_at) VALUES (:id, :token, :expires_at)";
             $stmt = $this->koneksi->prepare($query);
             $expiredAt = time() + 3600;
             $stmt->bindParam(':id', $id);
@@ -49,7 +49,7 @@
 
             $payload = json_decode(base64_decode($base64payload), true);
 
-            if (isset($payload['exp'])&& $payload['exp'] < time()) {
+            if (isset($payload['exp']) && $payload['exp'] < time()) {
                 return false;
             }
 
