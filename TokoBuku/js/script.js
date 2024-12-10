@@ -1,5 +1,6 @@
 const API_URL = "http://localhost/Buku/TokoBuku/api.php"; // URL utama API
-
+const btnBook = document.getElementById("btn-book");
+const btnLogin = document.getElementById("btn-login");
 // Fungsi untuk menyimpan token ke cookies
 function setCookie(name, value, days) {
     const date = new Date();
@@ -70,6 +71,7 @@ function login() {
         if (data.status === 'true') {
             setCookie('authToken', data.token, 1); // Simpan token ke cookies (berlaku 1 hari)
             alert("Login berhasil!");
+            btnLogin.textContent = "Logout";
             loadBook(); // Memuat daftar buku setelah login
         } else {
             alert("Login gagal: " + data.message);
@@ -81,6 +83,7 @@ function login() {
 function logout() {
     deleteCookie('authToken'); // Hapus token dari cookies
     alert("Logout berhasil!");
+    btnLogin.textContent = "Register";
     loadLogin(); // Kembali ke halaman login
 }
 
@@ -95,7 +98,7 @@ function register(){
     }
 
     sendRequest("/register","POST", {username, password}).then((data) => {
-        if (data.success) {
+        if (data) {
             alert("Register berhasil!");
             loadLogin();
         }else{
@@ -110,6 +113,9 @@ function loadBook() {
     sendRequest("/getBook", "GET").then((response) => {
         const content = document.getElementById("content");
 
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("wrapper");
+
         // Buat dua kolom
         const column1 = document.createElement("div");
         const column2 = document.createElement("div");
@@ -122,6 +128,7 @@ function loadBook() {
         if (response.status === "true" && response.data.length > 0) {
             response.data.forEach((book, index) => {
                 // Buat elemen kartu untuk setiap buku
+
                 const card = document.createElement("div");
                 card.classList.add("card");
                 card.innerHTML = `
@@ -143,8 +150,11 @@ function loadBook() {
         }
 
         // Tambahkan kedua kolom ke kontainer utama
-        content.appendChild(column1);
-        content.appendChild(column2);
+        wrapper.appendChild(column1);
+        wrapper.appendChild(column2);
+
+        content.innerHTML=``;
+        content.appendChild(wrapper);
     }).catch((error) => {
         console.error("Error fetching books:", error);
         const content = document.getElementById("content");
@@ -157,25 +167,28 @@ function loadBook() {
 function loadLogin() {
     const content = document.getElementById("content");
     content.innerHTML = `
-        <h2>Login</h2>
-        <div class="card">
+        <div>
+            <h2>Login</h2>
+        </div>
+        <div class="card" id="card-input">
             <input type="text" id="username" placeholder="Username" /><br /><br />
             <input type="password" id="password" placeholder="Password" /><br /><br />
             <button onclick="login()">Login</button>
-            <button onclick="loadRegister()">Register</button>
         </div>`;
+    
 }
 
 function loadRegister(){
     const content = document.getElementById("content");
     content.innerHTML = `
-    <h2>Register</h2>
-    <div class="card">
+    <div>
+        <h2>Register</h2>
+    </div>
+    <div class="card" id="card-input">
         <input type="text" id="username" placeholder="Username" /><br /><br />
         <input type="password" id="password" placeholder="Password" /><br /><br />
         <input type="password" id="confirmPassword" placeholder="Re-Password" /><br/> <br/>
         <button onClick="register()">Register</button>
-        <button onClick="loadLogin()">Back to Login</button>
     </div>
     `;
 }
@@ -183,20 +196,29 @@ function loadRegister(){
 // Periksa apakah token tersedia di cookies
 document.addEventListener("DOMContentLoaded", () => {
     const token = getCookie('authToken');
-    const btnBook = document.getElementById("btn-book");
-    const btnLogin = document.getElementById("btn-login");
 
     btnBook.addEventListener("click", ()=>{
         loadBook();
     });
 
     btnLogin.addEventListener("click", () => {
-        loadLogin();
+        if (btnLogin.textContent == "Login") {
+            btnLogin.textContent = "Register";
+            loadLogin();
+        }else if(btnLogin.textContent == "Register"){
+            btnLogin.textContent = "Login";
+            loadRegister();
+        }else{
+            logout();
+        }
+        
     });
 
     if (token) {
+        btnLogin.textContent = "Logout";
         loadBook(); // Jika token ada, langsung memuat daftar buku
     } else {
+        btnLogin.textContent = "Register";
         loadLogin(); // Jika tidak, tampilkan halaman login
     }
 });
