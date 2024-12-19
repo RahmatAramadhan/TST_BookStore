@@ -16,18 +16,24 @@
             $stmt = $this->koneksi->prepare($query);
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            error_log("Isi data: " . print_r($data, true));
-
-            $response = [
+            array_walk_recursive($data, function (&$item) {
+                if (is_string($item)) {
+                    $item = mb_convert_encoding($item, 'UTF-8', 'auto');
+                }
+            });
+    
+            $response = json_encode([
                 "success" => [
                     "status" => "true",
                     "message" => "Data buku berhasil ditampilkan",
                     "data" => $data
                 ]
-            ];
-            $cleanData = mb_convert_encoding($response, 'UTF-8', 'auto'); 
-
-            return $cleanData;
+            ], JSON_UNESCAPED_UNICODE);
+    
+            if (!$response) {
+                error_log("JSON Error: " . json_last_error_msg());
+            }
+            return $response;
         }
 
         public function getBookById($id){
