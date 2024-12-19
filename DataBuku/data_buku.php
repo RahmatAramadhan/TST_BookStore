@@ -25,6 +25,9 @@
                     "data" => $data
                 ]
             ]);
+            if (!$response) {
+                error_log("JSON Error: " . json_last_error_msg());
+            }
             return $response;
         }
 
