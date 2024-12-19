@@ -1,6 +1,6 @@
 <?php 
     $hostname   = 'mysql:host=localhost;dbname=desasumb_data_buku';
-    $username   = 'desasub_admin';
+    $username   = 'desasumb_admin';
     $password   = 'CyberNilaiA';
 
     $koneksi    = new pdo($hostname, $username, $password);
