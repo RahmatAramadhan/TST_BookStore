@@ -13,12 +13,13 @@
             $stmt = $this->koneksi->prepare($query);
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Isi data: " . print_r($data, true));
 
             $response = [
                 "success" => [
                     "status" => "true",
-                    "message" => "Data buku berhasil ditampilkan"
-                    
+                    "message" => "Data buku berhasil ditampilkan",
+                    "data" => $data
                 ]
             ];
             return $response;
