@@ -3,7 +3,7 @@
     require_once 'toko_buku.php';
 
     $tokoBuku   = new toko_buku($koneksi);
-    $auth = new authentikasi($koneksi);
+    $auth       = new authentikasi($koneksi);
     $method     = $_SERVER['REQUEST_METHOD'];
     $endpoint   = $_SERVER['PATH_INFO'];
     header('Content-Type: application/json');
