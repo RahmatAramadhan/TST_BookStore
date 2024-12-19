@@ -3,6 +3,9 @@
         private $koneksi;
         public function __construct($koneksi){
             $this->koneksi = $koneksi;
+            if (!$this->koneksi) {
+                error_log("Database connection failed");
+            }
         }
 
         public function getBook(){
