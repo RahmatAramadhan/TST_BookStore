@@ -9,6 +9,8 @@
         }
 
         public function getBook(){
+            $query = "SELECT * FROM buku";
+            $stmt = $this->koneksi->prepare($query);
             $response = [
                 "success" => [
                     "status" => "true",
@@ -16,8 +18,6 @@
                 ]
             ];
             return $response;
-            $query = "SELECT * FROM buku";
-            $stmt = $this->koneksi->prepare($query);
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
