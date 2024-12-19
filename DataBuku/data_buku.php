@@ -1,4 +1,7 @@
 <?php 
+    ini_set('memory_limit', '256M');
+    ini_set('max_execution_time', 60); 
+
     class data_buku{
         private $koneksi;
         public function __construct($koneksi){
