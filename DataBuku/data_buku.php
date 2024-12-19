@@ -12,6 +12,7 @@
             $query = "SELECT * FROM buku";
             $stmt = $this->koneksi->prepare($query);
             $stmt->execute();
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $response = [
                 "success" => [
                     "status" => "true",
@@ -19,7 +20,6 @@
                 ]
             ];
             return $response;
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $response = [
                 "success" => [
