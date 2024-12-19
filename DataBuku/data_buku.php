@@ -13,13 +13,6 @@
             $stmt = $this->koneksi->prepare($query);
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $response = [
-                "success" => [
-                    "status" => "true",
-                    "message" => "Data buku berhasil ditampilkan",
-                ]
-            ];
-            return $response;
 
             $response = [
                 "success" => [
