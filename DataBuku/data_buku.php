@@ -18,17 +18,16 @@
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             error_log("Isi data: " . print_r($data, true));
 
-            $response = json_encode([
+            $response = [
                 "success" => [
                     "status" => "true",
                     "message" => "Data buku berhasil ditampilkan",
                     "data" => $data
                 ]
-            ]);
-            if (!$response) {
-                error_log("JSON Error: " . json_last_error_msg());
-            }
-            return $response;
+            ];
+            $cleanData = mb_convert_encoding($response, 'UTF-8', 'auto'); 
+
+            return $cleanData;
         }
 
         public function getBookById($id){
