@@ -9,7 +9,7 @@
         }
 
         public function getBookById($id){
-            $url = "http://localhost/Buku/DataBuku/api.php/getBookById?id=".urlencode($id);
+            $url = "https://tokobuku.desasumberagung.com/DataBuku/api.php/getBookById?id=".urlencode($id);
             $result = sendRequest($url, 'GET');
             $response = json_decode($result, true);
 
@@ -38,7 +38,7 @@
         }
 
         public function getBookFromAPI(){
-            $url = "http://localhost/Buku/DataBuku/api.php/getBook";
+            $url = "https://tokobuku.desasumberagung.com/DataBuku/api.php/getBook";
             $result = sendRequest($url, 'GET');
             $response = json_decode($result, true);
 
