@@ -9,6 +9,13 @@
         }
 
         public function getBook(){
+            $response = [
+                "success" => [
+                    "status" => "true",
+                    "message" => "Data buku berhasil ditampilkan",
+                ]
+            ];
+            return $response;
             $query = "SELECT * FROM buku";
             $stmt = $this->koneksi->prepare($query);
             $stmt->execute();
