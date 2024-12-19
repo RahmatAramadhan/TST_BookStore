@@ -5,6 +5,7 @@
     $dataBuku   = new data_buku($koneksi);
     $method     = $_SERVER['REQUEST_METHOD'];
     $endpoint   = $_SERVER['PATH_INFO'];
+    error_log("PATH_INFO: " . print_r($_SERVER['PATH_INFO'], true));
     header('Content-Type: application/json');
 
     switch ($method) {
@@ -31,7 +32,10 @@
             break;
 
         default:
-            
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Endpoint tidak ditemukan'
+            ]);
             break;
     }
 
