@@ -17,8 +17,8 @@
             $response = [
                 "success" => [
                     "status" => "true",
-                    "message" => "Data buku berhasil ditampilkan",
-                    "data" => $data
+                    "message" => "Data buku berhasil ditampilkan"
+                    
                 ]
             ];
             return $response;
