@@ -15,13 +15,13 @@
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             error_log("Isi data: " . print_r($data, true));
 
-            $response = [
+            $response = json_encode([
                 "success" => [
                     "status" => "true",
                     "message" => "Data buku berhasil ditampilkan",
                     "data" => $data
                 ]
-            ];
+            ]);
             return $response;
         }
 

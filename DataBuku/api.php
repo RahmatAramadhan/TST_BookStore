@@ -12,7 +12,7 @@
         case 'GET':
             if ($endpoint == '/getBook') {
                 $result = $dataBuku->getBook();
-                echo json_encode($result);
+                echo ($result);
             }elseif($endpoint == '/getBookById'){
                 if (isset($_GET['id'])) {
                     $id = $_GET['id'];
