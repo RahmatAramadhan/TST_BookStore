@@ -1,7 +1,7 @@
 <?php 
-    $hostname   = 'mysql:host=localhost;dbname=desasumb_toko_buku';
-    $username   = 'desasumb_admin';
-    $password   = 'CyberNilaiA';
+    $hostname   = 'mysql:host=localhost;dbname=Book_store';
+    $username   = 'rahmat';
+    $password   = 'Rahmat32*';
 
     $koneksi    = new pdo($hostname, $username, $password);
 

@@ -1,4 +1,4 @@
-const API_URL = "https://tokobuku.desasumberagung.com/api.php"; // URL utama API
+const API_URL = "api.php"; // URL utama API
 const btnBook = document.getElementById("btn-book");
 const btnLogin = document.getElementById("btn-login");
 // Fungsi untuk menyimpan token ke cookies
