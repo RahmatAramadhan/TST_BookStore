@@ -3,7 +3,7 @@
 *Empowering Readers, Transforming Bookstore Experiences*
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/RahmatAramadhan/TST_BookStore) 
-![PHP](https://img.shields.io/badge/php-6.5.0-777bb3?logo=php&logoColor=white) 
+![PHP](https://img.shields.io/badge/php-8.2.12-777bb3?logo=php&logoColor=white) 
 ![Languages](https://img.shields.io/github/languages/top/RahmatAramadhan/TST_BookStore)
 
 *Built with the tools and technologies:*  
